@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.urms.mapper.RoleMapper">
+    <resultMap id="BaseResultMap" type="com.urms.entity.Role">
+        <result column="ROLE_ID" jdbcType="DECIMAL" property="roleId"/>
+        <result column="ROLE_NAME" jdbcType="VARCHAR" property="roleName"/>
+        <result column="ROLE_REMARKS" jdbcType="VARCHAR" property="roleRemarks"/>
+        <result column="ROLE_CREATE_TIME" jdbcType="TIMESTAMP" property="roleCreateTime"/>
+        <result column="ROLE_HIDDEN" jdbcType="DECIMAL" property="roleHidden"/>
+    </resultMap>
+    <insert id="insertRole" parameterType="com.urms.entity.Role">
+        insert into TB_ROLE (ROLE_ID, ROLE_NAME, ROLE_REMARKS,
+                             ROLE_CREATE_TIME, ROLE_HIDDEN)
+        values (#{roleId,jdbcType=DECIMAL}, #{roleName,jdbcType=VARCHAR}, #{roleRemarks,jdbcType=VARCHAR},
+                #{roleCreateTime,jdbcType=TIMESTAMP}, #{roleHidden,jdbcType=DECIMAL})
+    </insert>
+    <update id="updateRoleById" parameterType="com.urms.entity.Role">
+        update TB_ROLE
+        set ROLE_NAME        = #{roleName,jdbcType=VARCHAR},
+            ROLE_REMARKS     = #{roleRemarks,jdbcType=VARCHAR},
+            ROLE_CREATE_TIME = #{roleCreateTime,jdbcType=TIMESTAMP},
+            ROLE_HIDDEN      = #{roleHidden,jdbcType=DECIMAL}
+        where ROLE_ID = #{roleId,jdbcType=DECIMAL}
+    </update>
+    <select id="selectRoleByCondition" parameterType="com.urms.entity.QueryRoleCondition" resultMap="BaseResultMap">
+        select * from TB_ROLE where 1=1
+        <if test="roleName!=null and roleName!=''">
+            and ROLE_NAME like concat('%',concat(#{roleName},'%'))
+        </if>
+        <if test="roleCreateTime!=null">
+            and ROLE_CREATE_TIME between #{roleCreateTime} and #{roleStopTime}
+        </if>
+        order by ROLE_ID
+
+
+    </select>
+
+</mapper>

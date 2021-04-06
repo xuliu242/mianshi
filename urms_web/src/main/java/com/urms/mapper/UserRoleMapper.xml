@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.urms.mapper.UserRoleMapper">
+    <resultMap id="BaseResultMap" type="com.urms.entity.UserRole">
+        <id column="USER_ROLE_ID" jdbcType="DECIMAL" property="userRoleId"/>
+        <result column="USER_LOGIN_NAME" jdbcType="VARCHAR" property="userLoginName"/>
+        <result column="USER_ID" jdbcType="DECIMAL" property="userId"/>
+        <result column="ROLE_ID" jdbcType="DECIMAL" property="roleId"/>
+    </resultMap>
+    <insert id="insertUserRole" parameterType="com.urms.entity.UserRole">
+        insert into TB_USER_ROLE (USER_ROLE_ID, USER_LOGIN_NAME, USER_ID,
+                                  ROLE_ID)
+        values (#{userRoleId,jdbcType=DECIMAL}, #{userLoginName,jdbcType=VARCHAR}, #{userId,jdbcType=DECIMAL},
+                #{roleId,jdbcType=DECIMAL})
+    </insert>
+    <update id="updateUserRoleById" parameterType="com.urms.entity.UserRole">
+        update TB_USER_ROLE
+        set USER_LOGIN_NAME = #{userLoginName,jdbcType=VARCHAR},
+            USER_ID         = #{userId,jdbcType=DECIMAL},
+            ROLE_ID         = #{roleId,jdbcType=DECIMAL}
+        where USER_ROLE_ID = #{userRoleId,jdbcType=DECIMAL}
+    </update>
+    <select id="selectUserRoleByCondition" parameterType="com.urms.entity.QueryUserRoleCondition" resultMap="BaseResultMap">
+        select ur.USER_ROLE_ID,ur.USER_LOGIN_NAME,ur.ROLE_ID,r.ROLE_NAME,ur.USER_ID,u.USER_NAME
+        from TB_USER_ROLE ur
+        LEFT JOIN TB_ROLE r on ur.ROLE_ID=r.ROLE_ID
+        LEFT JOIN TB_USER u on ur.USER_ID=u.USER_ID
+        where 1=1
+        <if test="userRoleId!=null">
+            and USER_ROLE_ID = #{userRoleId}
+        </if>
+        <if test="userLoginName!=null">
+            and USER_LOGIN_NAME = #{userLoginName,jdbcType=VARCHAR}
+        </if>
+
+
+    </select>
+
+</mapper>

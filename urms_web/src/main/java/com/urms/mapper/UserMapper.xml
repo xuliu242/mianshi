@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.urms.mapper.UserMapper">
+    <resultMap id="BaseResultMap" type="com.urms.entity.User">
+        <id column="USER_ID" jdbcType="INTEGER" property="userId"/>
+        <result column="USER_LOGIN_NAME" jdbcType="VARCHAR" property="userLoginName"/>
+        <result column="USER_PASSWORD" jdbcType="VARCHAR" property="userPassword"/>
+        <result column="USER_NAME" jdbcType="VARCHAR" property="userName"/>
+        <result column="USER_PHONE" jdbcType="DECIMAL" property="userPhone"/>
+        <result column="USER_EMAIL" jdbcType="VARCHAR" property="userEmail"/>
+        <result column="USER_SEX" jdbcType="VARCHAR" property="userSex"/>
+        <result column="USER_STATUS" jdbcType="VARCHAR" property="userStatus"/>
+        <result column="USER_CREATE_TIME" jdbcType="TIMESTAMP" property="userCreateTime"/>
+        <result column="USER_REMARKS" jdbcType="VARCHAR" property="userRemarks"/>
+        <result column="USER_HIDDEN" jdbcType="INTEGER" property="userHidden"/>
+        <result column="USER_UPDATE_TIME" jdbcType="TIMESTAMP" property="userUpdateTime"/>
+    </resultMap>
+    <select id="selectAll" resultMap="BaseResultMap">
+        select *
+        from TB_USER
+    </select>
+    <select id="selectByUserId" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+        select *
+        from TB_USER
+        where USER_ID = #{userId,jdbcType=INTEGER}
+    </select>
+    <select id="selectUserByLoginName" resultMap="BaseResultMap" parameterType="java.lang.String">
+        select *
+        from TB_USER
+        where USER_LOGIN_NAME = #{userLoginName,jdbcType=VARCHAR}
+    </select>
+    <insert id="insertUser" parameterType="com.urms.entity.User">
+        insert into TB_USER (USER_ID, USER_LOGIN_NAME, USER_PASSWORD,
+                             USER_NAME, USER_PHONE, USER_EMAIL,
+                             USER_SEX, USER_STATUS, USER_CREATE_TIME,
+                             USER_REMARKS, USER_HIDDEN, USER_UPDATE_TIME)
+        values (#{userId,jdbcType=DECIMAL}, #{userLoginName,jdbcType=VARCHAR}, #{userPassword,jdbcType=VARCHAR},
+                #{userName,jdbcType=VARCHAR}, #{userPhone,jdbcType=DECIMAL}, #{userEmail,jdbcType=VARCHAR},
+                #{userSex,jdbcType=VARCHAR}, #{userStatus,jdbcType=VARCHAR}, #{userCreateTime,jdbcType=TIMESTAMP},
+                #{userRemarks,jdbcType=VARCHAR}, #{userHidden,jdbcType=DECIMAL}, #{userUpdateTime,jdbcType=TIMESTAMP})
+    </insert>
+    <update id="updateUserById" parameterType="com.urms.entity.User">
+        update TB_USER
+        set USER_LOGIN_NAME  = #{userLoginName,jdbcType=VARCHAR},
+            USER_PASSWORD    = #{userPassword,jdbcType=VARCHAR},
+            USER_NAME        = #{userName,jdbcType=VARCHAR},
+            USER_PHONE       = #{userPhone,jdbcType=DECIMAL},
+            USER_EMAIL       = #{userEmail,jdbcType=VARCHAR},
+            USER_SEX         = #{userSex,jdbcType=VARCHAR},
+            USER_STATUS      = #{userStatus,jdbcType=VARCHAR},
+            USER_CREATE_TIME = #{userCreateTime,jdbcType=TIMESTAMP},
+            USER_REMARKS     = #{userRemarks,jdbcType=VARCHAR},
+            USER_HIDDEN      = #{userHidden,jdbcType=DECIMAL},
+            USER_UPDATE_TIME = #{userUpdateTime,jdbcType=TIMESTAMP}
+        where USER_ID = #{userId,jdbcType=DECIMAL}
+    </update>
+    <select id="selectUserByCondition" parameterType="com.urms.entity.QueryUserCondition" resultMap="BaseResultMap">
+        select * from TB_USER where 1=1
+        <if test="loginName!=null and loginName!=''">
+            and USER_LOGIN_NAME = #{loginName,jdbcType=VARCHAR}
+        </if>
+        <if test="userName!=null and userName !=''">
+            and USER_NAME like concat('%',concat(#{userName},'%'))
+        </if>
+        <if test="status!=null and status !=''">
+            and USER_STATUS = #{status,jdbcType=VARCHAR}
+        </if>
+        <if test="startTime!=null and stopTime!=null">
+            and USER_CREATE_TIME between #{startTime,jdbcType=TIMESTAMP} and #{stopTime,jdbcType=TIMESTAMP}
+        </if>
+        order by USER_ID
+
+    </select>
+
+</mapper>

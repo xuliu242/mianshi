@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.urms.mapper.RoleMenuMapper">
+    <resultMap id="BaseResultMap" type="com.urms.entity.RoleMenu">
+        <id column="ROLE_MENU_ID" jdbcType="DECIMAL" property="roleMenuId" />
+        <result column="ROLE_ID" jdbcType="DECIMAL" property="roleId" />
+        <result column="MENU_ID" jdbcType="DECIMAL" property="menuId" />
+    </resultMap>
+    <insert id="insertRoleMenu" parameterType="com.urms.entity.RoleMenu">
+        insert into TB_ROLE_MENU (ROLE_MENU_ID, ROLE_ID, MENU_ID
+        )
+        values (#{roleMenuId,jdbcType=DECIMAL}, #{roleId,jdbcType=DECIMAL}, #{menuId,jdbcType=DECIMAL}
+               )
+    </insert>
+
+</mapper>
