@@ -26,5 +26,6 @@ public interface UserRoleService extends IService<UserRole> {
     List<UserRole> selectByQueryUserRoleCondition(QueryUserRoleCondition qurc);
     List<Integer> selectRoleIds(Integer userId);    //根据用户id查询角色ids
     Boolean doAssignRoles(Integer userId,Integer[] roleIds);
+    List<Role> selectRolesByUserId(Integer userId);
 
 }

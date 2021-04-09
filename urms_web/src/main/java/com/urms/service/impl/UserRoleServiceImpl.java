@@ -13,6 +13,7 @@ import com.urms.service.UserRoleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -98,5 +99,16 @@ public class UserRoleServiceImpl extends ServiceImpl<UserRoleMapper, UserRole> i
             }
         }
         return true;
+    }
+
+    @Override
+    public List<Role> selectRolesByUserId(Integer userId) {
+        List<Integer> roleIds = userRoleMapper.selectRoleIds(userId);
+        List<Role> roleList=new ArrayList<>();
+        for (int i = 0; i < roleIds.size(); i++) {
+            Role role = roleMapper.selectByRoleId(roleIds.get(i));
+            roleList.add(role);
+        }
+        return roleList;
     }
 }

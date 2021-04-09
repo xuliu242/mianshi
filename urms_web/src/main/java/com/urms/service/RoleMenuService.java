@@ -2,6 +2,7 @@ package com.urms.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.urms.entity.Menu;
+import com.urms.entity.Role;
 import com.urms.entity.RoleMenu;
 
 import java.util.List;
@@ -21,5 +22,6 @@ public interface RoleMenuService extends IService<RoleMenu> {
     int deleteRoleMenuById(Integer roleMenuId);
     List<Menu> selectByRoleId(Integer roleId);
     List<Menu> selectMenuByUserId(Integer userId);
+    public List<Menu> findMenuByRoles(List<Role> roles);
 
 }

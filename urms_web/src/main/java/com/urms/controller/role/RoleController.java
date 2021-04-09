@@ -66,6 +66,7 @@ public class RoleController {
     // 条件查询
     @RequestMapping("/selectRoleByCondition")
     public Result selectRoleByCondition(@RequestBody QueryRoleCondition qrc) {
+//        int i=1/0;
         //       获取分页数据
         Integer pageNum = qrc.getPageNum()==null?1:qrc.getPageNum();
         Integer pageSize = qrc.getPageSize()==null?10:qrc.getPageSize();

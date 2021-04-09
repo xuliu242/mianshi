@@ -8,6 +8,7 @@ import com.urms.entity.QueryUserCondition;
 import com.urms.entity.User;
 import com.urms.mapper.UserMapper;
 import com.urms.service.UserService;
+import com.urms.utils.MD5Utils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -47,6 +48,11 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 
     @Override
     public int insertUser(User user) {
+        String salt = String.valueOf(user.getUserLoginName());
+        String md5Encryption = MD5Utils.md5Encryption(user.getUserPassword(), salt);
+        String substring = md5Encryption.substring(8, 24);
+        user.setUserPassword(substring);
+
         return userMapper.insertUser(user);
     }
 

@@ -6,6 +6,9 @@ import lombok.Data;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ *
+ */
 //公共返回结果类
 @Data
 public class Result {

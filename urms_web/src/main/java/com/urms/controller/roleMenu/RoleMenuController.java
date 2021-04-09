@@ -34,6 +34,10 @@ public class RoleMenuController {
         return Result.error();
     }
 
+    /**
+     * @param map
+     * @return
+     */
     //添加角色权限数据
     @RequestMapping("/insertRoleMenu")
     private Result insertRoleMenu(@RequestBody Map<String,Object> map) {
