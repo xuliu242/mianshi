@@ -3,6 +3,7 @@ package com.urms.handle;
 
 import com.urms.response.Result;
 import com.urms.response.ResultCode;
+import org.apache.shiro.authz.UnauthorizedException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -30,5 +31,12 @@ public class GlobalExceptionHandle {
     public Result error(BusinessException e){
         e.printStackTrace();
         return Result.error().code(e.getCode()).message(e.getMessage());
+    }
+    //    自定义异常
+    @ExceptionHandler(UnauthorizedException.class)
+    @ResponseBody
+    public Result error(UnauthorizedException e){
+        e.printStackTrace();
+        return Result.error().code(2001).message(e.getMessage());
     }
 }

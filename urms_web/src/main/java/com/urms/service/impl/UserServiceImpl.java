@@ -48,7 +48,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 
     @Override
     public int insertUser(User user) {
-        String salt = String.valueOf(user.getUserLoginName());
+        String salt = user.getUserLoginName();
         String md5Encryption = MD5Utils.md5Encryption(user.getUserPassword(), salt);
         String substring = md5Encryption.substring(8, 24);
         user.setUserPassword(substring);
@@ -63,6 +63,10 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 
     @Override
     public int updateUserById(User user) {
+        String salt = user.getUserLoginName();
+        String md5Encryption = MD5Utils.md5Encryption(user.getUserPassword(), salt);
+        String substring = md5Encryption.substring(8, 24);
+        user.setUserPassword(substring);
         return userMapper.updateUserById(user);
     }
 

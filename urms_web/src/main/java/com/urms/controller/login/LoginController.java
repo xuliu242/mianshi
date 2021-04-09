@@ -32,7 +32,7 @@ public class LoginController {
         if (userLogin == null) {
             return Result.error().message("无此用户");
         }
-        String md5Encryption = MD5Utils.md5Encryption(user.getUserPassword(), String.valueOf(userLogin.getUserId()));
+        String md5Encryption = MD5Utils.md5Encryption(user.getUserPassword(), userLogin.getUserLoginName());
         String substring = md5Encryption.substring(8, 24);
         String token= JWTUtils.sign(user.getUserLoginName(),substring);
         JWTToken jwtToken=new JWTToken(token);

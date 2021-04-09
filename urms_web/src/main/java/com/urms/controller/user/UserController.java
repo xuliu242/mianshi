@@ -8,6 +8,7 @@ import com.urms.entity.QueryUserCondition;
 import com.urms.entity.User;
 import com.urms.response.Result;
 import com.urms.service.UserService;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -91,6 +92,7 @@ public class UserController {
     //    根据用户ID删除用户信息
     @RequestMapping("/deleteUserById")
     @ResponseBody
+    @RequiresPermissions({"user:delete"})
     public Result deleteUserById(Integer userId) {
         int i = userService.deleteUserById(userId);
         if (i > 0) {

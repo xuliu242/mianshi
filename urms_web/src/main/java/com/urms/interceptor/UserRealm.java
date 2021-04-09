@@ -75,6 +75,9 @@ public class UserRealm extends AuthorizingRealm {
                 }
             }
         }
+        System.out.println(authorizationInfo.toString());
+        System.out.println(authorizationInfo.getRoles().toString());
+        System.out.println(authorizationInfo.getStringPermissions().toString());
         return authorizationInfo;
     }
 
@@ -120,10 +123,10 @@ public class UserRealm extends AuthorizingRealm {
             for (Menu menu : menus) {
                 String url = menu.getMenuUrl();
                 String per = menu.getMenuOpcode();
-                if(menu.getMenuType().equals(1)&& !StringUtils.isEmpty(url)){
+                if(menu.getMenuType().equals("1")&& !StringUtils.isEmpty(url)){
                     urls.add(menu.getMenuUrl());
                 }
-                if(menu.getMenuType().equals(2)&&!StringUtils.isEmpty(per)){
+                if(menu.getMenuType().equals("2")&&!StringUtils.isEmpty(per)){
                     perms.add(menu.getMenuOpcode());
                 }
             }
@@ -135,6 +138,11 @@ public class UserRealm extends AuthorizingRealm {
         activeUser.setMenus(menus);
         activeUser.setUrls(urls);
         activeUser.setPermissions(perms);
+
+        System.out.println(activeUser.toString());
+        System.out.println("activeUser.getPermissions()"+activeUser.getPermissions());
+        System.out.println("activeUser.getRoles()"+activeUser.getRoles().toString());
+        System.out.println("activeUser.getUrls()"+activeUser.getUrls().toString());
         return new SimpleAuthenticationInfo(activeUser, token, getName());
     }
 }
