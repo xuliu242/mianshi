@@ -48,6 +48,7 @@ public class JWTFilter extends BasicHttpAuthenticationFilter {
     protected boolean onAccessDenied(ServletRequest request, ServletResponse response){
         //完成token登入
         //1.检查请求头中是否含有token
+        System.out.println("ACCESS_TOKEN===========================");
         HttpServletRequest httpServletRequest= (HttpServletRequest) request;
         String token = httpServletRequest.getHeader("ACCESS_TOKEN");
         //2. 如果客户端没有携带token，拦下请求
@@ -96,10 +97,10 @@ public class JWTFilter extends BasicHttpAuthenticationFilter {
             httpServletResponse.setStatus(HttpStatus.OK.value());
             httpServletResponse.setCharacterEncoding("UTF-8");
             httpServletResponse.setContentType("application/json; charset=utf-8");
-            httpServletResponse.sendRedirect("/urms/login/unauthorized/");
+            httpServletResponse.sendRedirect("/urms/login/token-error/");
         } catch (IOException e) {
             e.printStackTrace();
-            log.error(e.getMessage());
+            log.error(e.getMessage()+"token认证错误===============================");
         }
     }
 }

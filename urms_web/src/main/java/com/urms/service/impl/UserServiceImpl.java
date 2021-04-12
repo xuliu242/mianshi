@@ -6,7 +6,9 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.urms.entity.QueryUserCondition;
 import com.urms.entity.User;
+import com.urms.handle.BusinessException;
 import com.urms.mapper.UserMapper;
+import com.urms.response.ResultCode;
 import com.urms.service.UserService;
 import com.urms.utils.MD5Utils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,6 +50,10 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 
     @Override
     public int insertUser(User user) {
+        User userByLoginName = userMapper.selectUserByLoginName(user.getUserLoginName());
+        if (userByLoginName!=null){
+            throw new BusinessException(ResultCode.USER_AlREADY_EXISTS_EXCEPTION.getCode(),"用户名已存在");
+        }
         String salt = user.getUserLoginName();
         String md5Encryption = MD5Utils.md5Encryption(user.getUserPassword(), salt);
         String substring = md5Encryption.substring(8, 24);

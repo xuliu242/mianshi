@@ -49,5 +49,10 @@ public class LoginController {
     public Result unauthorized(){
         return Result.error().message("非法请求");
     }
+    @RequestMapping("/token-error")
+    @ResponseBody
+    public Result token(){
+        return Result.error().code(501).message("token错误");
+    }
 
 }

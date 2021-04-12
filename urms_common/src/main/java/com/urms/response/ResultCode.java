@@ -15,13 +15,29 @@ public enum  ResultCode implements CustomResultCode{
      * */
     ARITHMETICEXCEPTION(306,"算术异常"),
     /*
-     * 505:"用户不存在"
+     * 5005:"用户不存在"
      * */
-    USER_NOT_FOUND_EXCEPTION(505,"用户不存在"),
+    USER_NOT_FOUND_EXCEPTION(5005,"用户不存在"),
+    /*
+     * 5006:"用户已存在"
+     * */
+    USER_AlREADY_EXISTS_EXCEPTION(5006,"用户已存在"),
+    /*
+     * 5007:"角色已存在"
+     * */
+    ROLE_AlREADY_EXISTS_EXCEPTION(5007,"角色已存在"),
+    /*
+     * 5008:"角色已分配给用户"
+     * */
+    ROLE_ASSIGNED_USER_EXCEPTION(5008,"角色已分配给用户"),
     /*
      * 504:"非法访问"
      * */
     ACCESS_EXCEPTION(504,"非法访问"),
+    /*
+     * 504:"非法访问"
+     * */
+    TOKEN_ERROR_EXCEPTION(501,"Token过期，请重新登录"),
     ;
 
     private Integer code;

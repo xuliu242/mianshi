@@ -3,6 +3,7 @@ package com.urms.handle;
 
 import com.urms.response.Result;
 import com.urms.response.ResultCode;
+import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authz.UnauthorizedException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -38,6 +39,13 @@ public class GlobalExceptionHandle {
     @ExceptionHandler(UnauthorizedException.class)
     @ResponseBody
     public Result error(UnauthorizedException e){
+        e.printStackTrace();
+        return Result.error().code(2001).message("没有相关权限");
+    }
+    //    自定义异常
+    @ExceptionHandler(AuthenticationException.class)
+    @ResponseBody
+    public Result error(AuthenticationException e){
         e.printStackTrace();
         return Result.error().code(2001).message("没有相关权限");
     }

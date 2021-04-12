@@ -53,4 +53,8 @@ public interface UserRoleMapper extends BaseMapper<UserRole> {
     @Delete("delete from TB_USER_ROLE where USER_ID=#{userId}")
     int deleteByUserId(Integer userId);
 
+    // 根据角色id查询用户ids
+    @Select("SELECT USER_ID FROM TB_USER_ROLE where ROLE_ID=#{userId} ORDER BY USER_ID")
+    List<Integer> selectUserIds(Integer roleId);
+
 }
