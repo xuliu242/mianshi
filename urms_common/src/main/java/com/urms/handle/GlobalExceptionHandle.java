@@ -8,6 +8,8 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import java.sql.SQLIntegrityConstraintViolationException;
+
 @ControllerAdvice
 public class GlobalExceptionHandle {
 //全局异常，没有指定异常的类型
@@ -37,6 +39,13 @@ public class GlobalExceptionHandle {
     @ResponseBody
     public Result error(UnauthorizedException e){
         e.printStackTrace();
-        return Result.error().code(2001).message(e.getMessage());
+        return Result.error().code(2001).message("没有相关权限");
+    }
+    //    自定义异常
+    @ExceptionHandler(SQLIntegrityConstraintViolationException.class)
+    @ResponseBody
+    public Result error(SQLIntegrityConstraintViolationException e){
+        e.printStackTrace();
+        return Result.error().code(6005).message(e.getMessage());
     }
 }

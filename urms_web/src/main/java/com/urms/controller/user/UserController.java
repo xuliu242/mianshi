@@ -48,13 +48,15 @@ public class UserController {
 
     }
 
-    //    查询所有用户信息
-//    @RequestMapping("/selectAll")
-//    @ResponseBody
-//    public Result selectAll() {
+       // 查询所有用户信息
+    @RequestMapping("/selectAll")
+    @ResponseBody
+    public Result selectAll() {
+        PageHelper.startPage(1,4);
 //        List<User> userList = userService.selectAll();
-//        return Result.ok().data("userList", userList);
-//    }
+        PageInfo pageInfo=new PageInfo(userService.selectAll());
+        return Result.ok().data("userList", pageInfo.getList()).data("total",pageInfo.getTotal());
+    }
 
     //    条件查询
     @RequestMapping("/selectUserByCondition")
@@ -66,11 +68,6 @@ public class UserController {
         PageHelper.startPage(pageNum,pageSize);
 //        获取条件
         List<User> result=new ArrayList<>();
-        if (quc.getUserName()!=null){
-
-        }
-
-
         PageInfo pageInfo=new PageInfo(userService.selectUserByCondition(quc));
 
 
@@ -79,6 +76,7 @@ public class UserController {
 
     //    添加用户数据
     @RequestMapping("/insertUser")
+    @RequiresPermissions("user:add")
     @ResponseBody
     public Result insertUser(@RequestBody User user) {
         user.setUserCreateTime(new Date());
@@ -103,6 +101,7 @@ public class UserController {
 
     //    根据用户ID更新用户信息
     @RequestMapping("/updateUserById")
+    @RequiresPermissions("user:update")
     @ResponseBody
     public Result updateUserById(@RequestBody User user) {
         user.setUserUpdateTime(new Date());
@@ -115,6 +114,7 @@ public class UserController {
 
     //    根据用户ID更新用户状态
     @RequestMapping("/updateUserStatusById")
+    @RequiresPermissions("user:update")
     @ResponseBody
     public Result updateUserStatusById(Integer userId,String userStatus) {
         int i = userService.updateUserStatusById(userId, userStatus);
@@ -125,6 +125,7 @@ public class UserController {
     }
     @RequestMapping("/deleteUserByIdMultiple")
     @ResponseBody
+    @RequiresPermissions("user:batch_delete")
     public Result deleteUserByIdMultiple(@RequestBody Map<String,Object> map) {
         List<Object> list = (List<Object>) map.get("userList");
         for (Object o:list) {

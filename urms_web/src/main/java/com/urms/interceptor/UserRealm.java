@@ -108,7 +108,7 @@ public class UserRealm extends AuthorizingRealm {
             throw new CredentialsException("密码错误!");
         }
 
-        if(userBean.getUserStatus().equals(0)){
+        if(userBean.getUserStatus().equals("0")){
             throw new LockedAccountException("账号已被锁定!");
         }
 
