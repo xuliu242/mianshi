@@ -116,7 +116,9 @@ public class UserController {
     @RequestMapping("/updateUserStatusById")
     @RequiresPermissions("user:update")
     @ResponseBody
-    public Result updateUserStatusById(Integer userId,String userStatus) {
+    public Result updateUserStatusById(@RequestBody Map<String,Object> map) {
+        Integer userId = (Integer) map.get("userId");
+        String userStatus = (String) map.get("userStatus");
         int i = userService.updateUserStatusById(userId, userStatus);
         if (i>0){
             return Result.ok();
