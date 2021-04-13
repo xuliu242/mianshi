@@ -35,6 +35,7 @@ public class RoleMenuController {
     }
 
     /**
+     * 添加角色权限数据
      * @param map
      * @return
      */
@@ -60,16 +61,10 @@ public class RoleMenuController {
     //根据角色id查找角色权限信息
     @RequestMapping("/selectByRoleId")
     private Result selectByRoleId(@RequestBody Integer roleId) {
-
         List<Menu> menuByRoleIdList = roleMenuService.selectByRoleId(roleId);
         List<Integer> menuIds=new ArrayList<>();
         for (Menu menu:menuByRoleIdList){
             menuIds.add(menu.getMenuId());
-            if (menu.getChildren()!=null){
-                for (Menu menuChild:menu.getChildren()) {
-                    menuIds.add(menuChild.getMenuId());
-                }
-            }
         }
         List<Menu> menuList = menuService.selectMenuByCondition(null);
         return Result.ok().data("menuList", menuList).data("menuIds",menuIds);

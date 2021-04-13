@@ -33,4 +33,12 @@ public interface RoleService extends IService<Role> {
     // 条件查询
     List<Role> selectRoleByCondition(QueryRoleCondition condition);
 
+    /**
+     * 根据角色id更新角色状态
+     * @param roleId
+     * @param roleHidden
+     * @return
+     */
+    int updateRoleStatusById(Integer roleId,Integer roleHidden);
+
 }

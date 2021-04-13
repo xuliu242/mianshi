@@ -30,5 +30,6 @@ public interface MenuService extends IService<Menu> {
     int updateMenuById(Menu menu);
     // 条件查询
     List<Menu> selectMenuByCondition(QueryMenuCondition qmc);
+    List<Menu> selectByParentId(Integer menuParentId);
 
 }

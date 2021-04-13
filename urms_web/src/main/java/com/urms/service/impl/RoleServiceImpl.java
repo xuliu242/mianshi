@@ -74,4 +74,15 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements Ro
     public List<Role> selectRoleByCondition(QueryRoleCondition condition) {
         return roleMapper.selectRoleByCondition(condition);
     }
+
+    /**
+     * @param roleId
+     * @param roleHidden
+     * @return
+     */
+    @Override
+    public int updateRoleStatusById(Integer roleId, Integer roleHidden) {
+        System.out.println("roleId"+roleId+",roleHidden"+roleHidden);
+        return roleMapper.updateRoleStatusById(roleId, roleHidden);
+    }
 }

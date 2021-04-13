@@ -25,6 +25,15 @@ public class MenuController {
         }
         return Result.error();
     }
+    //
+    @RequestMapping("/selectByParentId")
+    public Result selectByParentId(Integer menuId) {
+        List<Menu> menu = menuService.selectByParentId(null);
+        if (menu!=null){
+            return Result.ok().data("result",menu);
+        }
+        return Result.error();
+    }
     // 根据菜单名查找菜单信息
     @RequestMapping("/selectByMenuName")
     public Result selectByMenuName(String menuName) {

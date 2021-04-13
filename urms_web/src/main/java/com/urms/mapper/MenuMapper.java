@@ -24,6 +24,16 @@ public interface MenuMapper extends BaseMapper<Menu> {
     @Select("select * from TB_MENU where MENU_ID=#{menuId}")
     Menu selectByMenuId(Integer menuId);
 
+    /**
+     * 根据父级id查询子菜单
+     * @param menuParentId
+     * @return
+     */
+    @Select("SELECT * FROM TB_MENU where MENU_PARENT_ID=#{menuParentId}")
+    List<Menu> selectByParentId(Integer menuParentId);
+    @Select("SELECT * FROM TB_MENU where MENU_PARENT_ID is null")
+    List<Menu> selectFirstMenu();
+
     //  根据菜单名查找菜单信息
     @Select("select * from TB_MENU where MENU_NAME=#{menuName}")
     Menu selectByMenuName(String menuName);

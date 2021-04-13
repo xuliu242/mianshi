@@ -63,8 +63,13 @@ public class RoleController {
         return Result.error();
     }
 
-    // 条件查询
+    /**
+     * 条件查询 角色
+     * @param qrc
+     * @return
+     */
     @RequestMapping("/selectRoleByCondition")
+
     public Result selectRoleByCondition(@RequestBody QueryRoleCondition qrc) {
 //        int i=1/0;
         //       获取分页数据
@@ -108,6 +113,23 @@ public class RoleController {
         }
         return Result.error();
     }
+
+    /**
+     * 根据角色id更新role状态
+     * @param map
+     * @return
+     */
+    @RequestMapping("/updateRoleStatusById")
+    public Result updateRoleStatusById(@RequestBody Map<String,Object> map) {
+        Integer roleId = (Integer) map.get("roleId");
+        Integer roleHidden = (Integer) map.get("roleHidden");
+        int i = roleService.updateRoleStatusById(roleId,roleHidden);
+        if (i>0){
+            return Result.ok();
+        }
+        return Result.error();
+    }
+
     @RequestMapping("/deleteRoleByIdMultiple")
     public Result deleteRoleByIdMultiple(@RequestBody Map<String,Object> map) {
         List<Object> list = (List<Object>) map.get("roleList");

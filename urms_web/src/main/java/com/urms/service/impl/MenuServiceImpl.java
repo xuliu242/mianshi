@@ -57,26 +57,35 @@ public class MenuServiceImpl extends ServiceImpl<MenuMapper, Menu> implements Me
 
     @Override
     public List<Menu> selectMenuByCondition(QueryMenuCondition qmc) {
-        List<Menu> menusAll = menuMapper.selectMenuByCondition(qmc);
-        List<Menu> menuFather = new ArrayList<>();
-        List<Menu> menuChildren = new ArrayList<>();
-        for (int i = 0; i < menusAll.size(); i++) {
-            if (menusAll.get(i).getMenuParentId() == null) {
-                menuFather.add(menusAll.get(i));
-            } else
-                menuChildren.add(menusAll.get(i));
 
-        }
-        for (Menu menu : menuFather) {
-            List<Menu> menuList=new ArrayList<>();
-            for (Menu menuChild: menuChildren) {
-                if (menu.getMenuId().equals(menuChild.getMenuParentId())){
-                    menuList.add(menuChild);
-                }
+        List<Menu> menusAll = menuMapper.selectMenuByCondition(qmc);//  全部菜单
+        List<Menu> firstMenuList=new ArrayList<>();
+//        List<Menu> secMenuList=new ArrayList<>();
+//        List<Menu> thirdMenuList=new ArrayList<>();
+        //筛选第一级目录菜单
+        for (Menu menu:menusAll) {
+            if (menu.getMenuParentId()==null){
+                firstMenuList.add(menu);
             }
-            menu.setChildren(menuList);
-
         }
-        return menuFather;
+        //筛选第二级目录
+        for (Menu menu: firstMenuList)
+        {
+            List<Menu> menuList = menuMapper.selectByParentId(menu.getMenuId());
+            menu.setChildren(menuList);
+        }
+        //获取第三级目录
+        for(Menu menu: firstMenuList){
+            for (Menu secMenu:menu.getChildren()){
+                List<Menu> menuList = menuMapper.selectByParentId(secMenu.getMenuId());
+                secMenu.setChildren(menuList);
+            }
+        }
+        return  firstMenuList;
+    }
+
+    @Override
+    public List<Menu> selectByParentId(Integer menuParentId) {
+        return menuMapper.selectByParentId(menuParentId);
     }
 }

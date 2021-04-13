@@ -3,10 +3,7 @@ package com.urms.mapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.urms.entity.QueryRoleCondition;
 import com.urms.entity.Role;
-import org.apache.ibatis.annotations.Delete;
-import org.apache.ibatis.annotations.Insert;
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.*;
 
 import java.util.List;
 
@@ -45,6 +42,15 @@ public interface RoleMapper extends BaseMapper<Role> {
     int updateRoleById(Role role);
 //    //根据角色id查找角色信息
 //    int selectByRoleId(Role role);
+
+    /**
+     * 根据角色id更新role状态
+     * @param roleId
+     * @param roleHidden
+     * @return
+     */
+    @Update("update TB_ROLE set ROLE_HIDDEN=#{roleHidden} where ROLE_ID=#{roleId}")
+    int updateRoleStatusById(@Param("roleId") Integer roleId,@Param("roleHidden") Integer roleHidden);
 
 
 

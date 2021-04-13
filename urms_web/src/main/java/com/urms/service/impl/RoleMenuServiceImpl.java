@@ -74,26 +74,7 @@ public class RoleMenuServiceImpl extends ServiceImpl<RoleMenuMapper, RoleMenu> i
     @Override
     public List<Menu> selectByRoleId(Integer roleId) {
         List<Menu> menusAll = roleMenuMapper.selectByRoleId(roleId);
-        List<Menu> menuFather = new ArrayList<>();
-        List<Menu> menuChildren = new ArrayList<>();
-        for (int i = 0; i < menusAll.size(); i++) {
-            if (menusAll.get(i).getMenuParentId() == null) {
-                menuFather.add(menusAll.get(i));
-            } else
-                menuChildren.add(menusAll.get(i));
-
-        }
-        for (Menu menu : menuFather) {
-            List<Menu> menuList = new ArrayList<>();
-            for (Menu menuChild : menuChildren) {
-                if (menu.getMenuId().equals(menuChild.getMenuParentId())) {
-                    menuList.add(menuChild);
-                }
-            }
-            menu.setChildren(menuList);
-
-        }
-        return menuFather;
+        return menusAll;
     }
 
     @Override
@@ -104,6 +85,16 @@ public class RoleMenuServiceImpl extends ServiceImpl<RoleMenuMapper, RoleMenu> i
             if (menu.getMenuParentId() == null) {
                 menuList.add(menu);
             }
+        }
+        //筛选第二级
+        for (Menu firstMenu:menuList){
+            List<Menu> secMenuList=new ArrayList<>();
+            for (Menu menu:menuAll ){
+                if (menu.getMenuParentId()==firstMenu.getMenuId()){
+                    secMenuList.add(menu);
+                }
+            }
+            firstMenu.setChildren(secMenuList);
         }
         return menuList;
     }
@@ -120,10 +111,6 @@ public class RoleMenuServiceImpl extends ServiceImpl<RoleMenuMapper, RoleMenu> i
                 roleMenuQueryWrapper.eq("ROLE_ID",role.getRoleId());
                 roleMenus=roleMenuMapper.selectList(roleMenuQueryWrapper);
 
-//                Example o = new Example(RoleMenu.class);
-//
-//                o.createCriteria().andEqualTo("roleId",role.getRoleId());
-//                    roleMenus= roleMenuMapper.selectByExample(o);
                 if(!CollectionUtils.isEmpty(roleMenus)){
                     for (RoleMenu roleMenu : roleMenus) {
                         menuIds.add(roleMenu.getMenuId());
