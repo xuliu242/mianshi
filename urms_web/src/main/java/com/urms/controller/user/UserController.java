@@ -4,10 +4,10 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
-import com.urms.entity.QueryUserCondition;
-import com.urms.entity.User;
+import com.urms.entity.*;
 import com.urms.response.Result;
 import com.urms.service.UserService;
+import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +29,7 @@ public class UserController {
 
     //    根据用户id查找用户信息
     @RequestMapping("/selectByUserId")
+    @ResponseBody
     public Result selectByUserId(Integer userId) {
         User user = userService.selectByUserId(userId);
         if (user!=null){
@@ -37,8 +38,33 @@ public class UserController {
         return Result.error().message("无此用户");
     }
 
+    /**
+     * 获取用户信息
+     * @return
+     */
+    @RequestMapping("/getUserInfo")
+    @ResponseBody
+    public Result getUserInfo(){
+        ActiveUser activeUser = (ActiveUser) SecurityUtils.getSubject().getPrincipal();
+        UserInfo userInfo=new UserInfo();
+        userInfo.setUserName(activeUser.getUser().getUserName());
+        userInfo.setUserLoginName(activeUser.getUser().getUserLoginName());
+        userInfo.setUrl(activeUser.getUrls());
+        userInfo.setPerms(activeUser.getPermissions());
+        List<Role> roles = activeUser.getRoles();
+        List<String> roleList=new ArrayList<>();
+        for (int i = 0; i < roles.size(); i++) {
+            String roleName = roles.get(i).getRoleName();
+            roleList.add(roleName);
+        }
+        userInfo.setRoles(roleList);
+        return Result.ok().data("userInfo",userInfo);
+    }
+
     //    根据用户名查找用户信息
     @RequestMapping("/selectByLoginName")
+    @ResponseBody
+    @RequiresPermissions("user:select")
     public Result selectByLoginName(String userLoginName) {
         User user = userService.selectUserByLoginName(userLoginName);
         if (user!=null){
@@ -51,6 +77,7 @@ public class UserController {
        // 查询所有用户信息
     @RequestMapping("/selectAll")
     @ResponseBody
+    @RequiresPermissions("user:select")
     public Result selectAll() {
         PageHelper.startPage(1,4);
 //        List<User> userList = userService.selectAll();
@@ -61,6 +88,7 @@ public class UserController {
     //    条件查询
     @RequestMapping("/selectUserByCondition")
     @ResponseBody
+    @RequiresPermissions("user:select")
     public Result selectUserByCondition(@RequestBody QueryUserCondition quc) {
 //       获取分页数据
         Integer pageNum = quc.getPageNum()==null?1:quc.getPageNum();

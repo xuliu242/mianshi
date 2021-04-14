@@ -45,7 +45,7 @@ public interface RoleMenuMapper extends BaseMapper<RoleMenu> {
     @Select("SELECT * FROM TB_MENU where MENU_ID in \n" +
             "(select DISTINCT MENU_ID from TB_ROLE_MENU rm where rm.ROLE_ID in \n" +
             "(select ur.ROLE_ID from TB_USER_ROLE ur where ur.USER_ID = #{userId})\n" +
-            ")ORDER BY  MENU_ID")
+            ")ORDER BY  MENU_QUEUE_NUMBER")
     List<Menu> selectMenuByUserId(Integer userId);
 
 }

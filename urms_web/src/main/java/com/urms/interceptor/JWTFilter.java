@@ -34,8 +34,10 @@ public class JWTFilter extends BasicHttpAuthenticationFilter {
      */
     @Override
     protected boolean isAccessAllowed(ServletRequest request, ServletResponse response, Object mappedValue) {
+        System.out.println("ACCESS_TOKEN_CHECKED===========================");
         Subject subject = SecurityUtils.getSubject();
-        return  null != subject && subject.isAuthenticated();
+//        return  null != subject && subject.isAuthenticated();
+        return  false;
     }
 
     /**

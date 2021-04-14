@@ -60,7 +60,7 @@ public class ShiroConfig {
         filterRuleMap.put("/webjars/**","anon");
         filterRuleMap.put("/swagger-resources/**","anon");
         filterRuleMap.put("/v2/**","anon");
-        filterRuleMap.put("/static/**","anon");
+//        filterRuleMap.put("/user/**","authc");
         filterRuleMap.put("/login/**","anon");
         //sql监控
         filterRuleMap.put("/druid/**","anon");

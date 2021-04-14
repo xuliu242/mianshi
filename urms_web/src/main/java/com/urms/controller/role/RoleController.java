@@ -10,6 +10,7 @@ import com.urms.entity.RoleTransfer;
 import com.urms.response.Result;
 import com.urms.service.RoleService;
 import com.urms.service.UserRoleService;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -30,6 +31,7 @@ public class RoleController {
 
     // 根据角色id查找角色信息
     @RequestMapping("/selectByRoleId")
+    @RequiresPermissions("role:select")
     public Result selectByRoleId(Integer roleId) {
         Role role = roleService.selectByRoleId(roleId);
         if (role!=null){
@@ -39,6 +41,7 @@ public class RoleController {
     }
     // 前端需要的角色数据
     @RequestMapping("/selectAllRoles")
+    @RequiresPermissions("role:select")
     public Result selectAllRoles(Integer userId) {
         List<Role> roleList = roleService.selectAll();
         List<RoleTransfer> roleTransferList=new ArrayList<>();
@@ -55,6 +58,7 @@ public class RoleController {
 
     // 根据角色名查找角色信息
     @RequestMapping("/selectByRoleName")
+    @RequiresPermissions("role:select")
     public Result selectByRoleName(String roleName) {
         List<Role> roles = roleService.selectRoleByRoleName(roleName);
         if (roles!=null){
@@ -69,7 +73,7 @@ public class RoleController {
      * @return
      */
     @RequestMapping("/selectRoleByCondition")
-
+    @RequiresPermissions("role:select")
     public Result selectRoleByCondition(@RequestBody QueryRoleCondition qrc) {
 //        int i=1/0;
         //       获取分页数据
@@ -85,6 +89,7 @@ public class RoleController {
 
     // 添加角色数据
     @RequestMapping("/insertRole")
+    @RequiresPermissions("role:add")
     public Result insertRole(@RequestBody Role role) {
         role.setRoleCreateTime(new Date());
         int i = roleService.insertRole(role);
@@ -96,6 +101,7 @@ public class RoleController {
 
     // 根据角色ID删除角色信息
     @RequestMapping("/deleteRoleById")
+    @RequiresPermissions("role:delete")
     public Result deleteRoleById(Integer roleId) {
         int i = roleService.deleteRoleById(roleId);
         if (i>0){
@@ -106,6 +112,7 @@ public class RoleController {
 
     // 根据角色ID更新角色信息
     @RequestMapping("/updateRoleById")
+    @RequiresPermissions("role:update")
     public Result updateRoleById(@RequestBody Role role) {
         int i = roleService.updateRoleById(role);
         if (i>0){
@@ -120,6 +127,7 @@ public class RoleController {
      * @return
      */
     @RequestMapping("/updateRoleStatusById")
+    @RequiresPermissions("role:update")
     public Result updateRoleStatusById(@RequestBody Map<String,Object> map) {
         Integer roleId = (Integer) map.get("roleId");
         Integer roleHidden = (Integer) map.get("roleHidden");
@@ -131,6 +139,7 @@ public class RoleController {
     }
 
     @RequestMapping("/deleteRoleByIdMultiple")
+    @RequiresPermissions("role:batch_delete")
     public Result deleteRoleByIdMultiple(@RequestBody Map<String,Object> map) {
         List<Object> list = (List<Object>) map.get("roleList");
         List<Role> roleList=new ArrayList<>();
