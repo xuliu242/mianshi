@@ -26,7 +26,14 @@ spring:
       maxPoolPreparedStatementPerConnectionSize: 20
       useGlobalDataSourceStat: true
       connectionProperties: druid.stat.mergeSql=true;druid.stat.slowSqlMillis=500
-
+  redis:
+    host: localhost
+    port: 6379
+    jedis:
+      pool:
+        max-wait: 5000ms
+        max-active: -1
+    timeout: 5000ms
 
   jackson:
     date-format: yyyy-MM-dd HH:mm:ss
