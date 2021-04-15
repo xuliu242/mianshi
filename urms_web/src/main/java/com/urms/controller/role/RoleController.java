@@ -10,10 +10,13 @@ import com.urms.entity.RoleTransfer;
 import com.urms.response.Result;
 import com.urms.service.RoleService;
 import com.urms.service.UserRoleService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.ArrayList;
@@ -21,6 +24,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+@Api(tags = "角色管理模块")
 @RestController
 @RequestMapping("/role")
 public class RoleController {
@@ -30,7 +34,8 @@ public class RoleController {
     private UserRoleService userRoleService;
 
     // 根据角色id查找角色信息
-    @RequestMapping("/selectByRoleId")
+    @ApiOperation(value = "根据角色id查找角色信息")
+    @RequestMapping(value = "/selectByRoleId",method = RequestMethod.GET)
     @RequiresPermissions("role:select")
     public Result selectByRoleId(Integer roleId) {
         Role role = roleService.selectByRoleId(roleId);
@@ -40,7 +45,8 @@ public class RoleController {
         return Result.error();
     }
     // 前端需要的角色数据
-    @RequestMapping("/selectAllRoles")
+    @ApiOperation(value = "前端需要的角色数据")
+    @RequestMapping(value = "/selectAllRoles",method = RequestMethod.GET)
     @RequiresPermissions("role:select")
     public Result selectAllRoles(Integer userId) {
         List<Role> roleList = roleService.selectAll();
@@ -57,7 +63,8 @@ public class RoleController {
     }
 
     // 根据角色名查找角色信息
-    @RequestMapping("/selectByRoleName")
+    @ApiOperation(value = "根据角色名查找角色信息")
+    @RequestMapping(value = "/selectByRoleName",method = RequestMethod.GET)
     @RequiresPermissions("role:select")
     public Result selectByRoleName(String roleName) {
         List<Role> roles = roleService.selectRoleByRoleName(roleName);
@@ -72,7 +79,8 @@ public class RoleController {
      * @param qrc
      * @return
      */
-    @RequestMapping("/selectRoleByCondition")
+    @ApiOperation(value = "条件查询 角色")
+    @RequestMapping(value = "/selectRoleByCondition",method = RequestMethod.POST)
     @RequiresPermissions("role:select")
     public Result selectRoleByCondition(@RequestBody QueryRoleCondition qrc) {
 //        int i=1/0;
@@ -88,7 +96,8 @@ public class RoleController {
     }
 
     // 添加角色数据
-    @RequestMapping("/insertRole")
+    @ApiOperation(value = "添加角色数据")
+    @RequestMapping(value = "/insertRole",method = RequestMethod.POST)
     @RequiresPermissions("role:add")
     public Result insertRole(@RequestBody Role role) {
         role.setRoleCreateTime(new Date());
@@ -100,7 +109,8 @@ public class RoleController {
     }
 
     // 根据角色ID删除角色信息
-    @RequestMapping("/deleteRoleById")
+    @ApiOperation(value = "根据角色ID删除角色信息")
+    @RequestMapping(value = "/deleteRoleById",method = RequestMethod.GET)
     @RequiresPermissions("role:delete")
     public Result deleteRoleById(Integer roleId) {
         int i = roleService.deleteRoleById(roleId);
@@ -111,7 +121,8 @@ public class RoleController {
     }
 
     // 根据角色ID更新角色信息
-    @RequestMapping("/updateRoleById")
+    @ApiOperation(value = "根据角色ID更新角色信息")
+    @RequestMapping(value = "/updateRoleById",method = RequestMethod.POST)
     @RequiresPermissions("role:update")
     public Result updateRoleById(@RequestBody Role role) {
         int i = roleService.updateRoleById(role);
@@ -126,7 +137,8 @@ public class RoleController {
      * @param map
      * @return
      */
-    @RequestMapping("/updateRoleStatusById")
+    @ApiOperation(value = "根据角色id更新role状态")
+    @RequestMapping(value = "/updateRoleStatusById",method = RequestMethod.POST)
     @RequiresPermissions("role:update")
     public Result updateRoleStatusById(@RequestBody Map<String,Object> map) {
         Integer roleId = (Integer) map.get("roleId");
@@ -138,7 +150,13 @@ public class RoleController {
         return Result.error();
     }
 
-    @RequestMapping("/deleteRoleByIdMultiple")
+    /**
+     * 多选删除角色
+     * @param map
+     * @return
+     */
+    @ApiOperation(value = "多选删除角色")
+    @RequestMapping(value = "/deleteRoleByIdMultiple",method = RequestMethod.POST)
     @RequiresPermissions("role:batch_delete")
     public Result deleteRoleByIdMultiple(@RequestBody Map<String,Object> map) {
         List<Object> list = (List<Object>) map.get("roleList");

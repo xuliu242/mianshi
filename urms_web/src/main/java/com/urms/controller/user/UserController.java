@@ -7,6 +7,7 @@ import com.github.pagehelper.PageInfo;
 import com.urms.entity.*;
 import com.urms.response.Result;
 import com.urms.service.UserService;
+import io.swagger.annotations.Api;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.junit.Test;
@@ -21,6 +22,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+@Api(tags = "用户管理模块")
 @Controller
 @RequestMapping("/user")
 public class UserController {

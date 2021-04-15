@@ -4,6 +4,7 @@ import com.urms.entity.QueryUserRoleCondition;
 import com.urms.entity.UserRole;
 import com.urms.response.Result;
 import com.urms.service.UserRoleService;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -42,6 +43,7 @@ public class UserRoleController {
     }
     //添加用户所属角色数据
     @RequestMapping("/doAssignRoles")
+    @RequiresPermissions("user:assign")
     public Result doAssignRoles(@RequestBody Map<String,Object> map){
         Integer userId = (Integer) map.get("userId");
         List<Integer> roleIdsList = (List<Integer>) map.get("roleIds");
