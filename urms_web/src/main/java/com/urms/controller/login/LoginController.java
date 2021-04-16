@@ -7,6 +7,7 @@ import com.urms.response.Result;
 import com.urms.service.UserService;
 import com.urms.utils.JWTUtils;
 import com.urms.utils.MD5Utils;
+import com.urms.utils.RedisUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.apache.shiro.SecurityUtils;
@@ -23,30 +24,38 @@ import javax.servlet.http.HttpSession;
 
 @Api(tags = "登录模块")
 @Controller
-@RequestMapping("/login")
+//@RequestMapping("/")
 public class LoginController {
     @Autowired
     private UserService userService;
+    @Autowired
+    RedisUtil redisUtil;
 
     //    public
     @ApiOperation(value = "登录")
-    @RequestMapping(value = "/doLogin",method = RequestMethod.POST)
+    @RequestMapping(value = "/login",method = RequestMethod.POST)
     @ResponseBody
-    public Result doLogin(@RequestBody User user, HttpServletResponse response, HttpSession session) {
+    public Result doLogin(@RequestBody User user, HttpServletResponse response) {
         User userLogin = userService.selectUserByLoginName(user.getUserLoginName());
         if (userLogin == null) {
             return Result.error().message("无此用户");
         }
-        String md5Encryption = MD5Utils.md5Encryption(user.getUserPassword(), userLogin.getUserLoginName());
+        String md5Encryption = MD5Utils.md5Encryption(user.getUserPassword(), user.getUserLoginName());
         String substring = md5Encryption.substring(8, 24);
-        String token = JWTUtils.sign(user.getUserLoginName(), substring);
-        JWTToken jwtToken = new JWTToken(token);
-        try {
-            SecurityUtils.getSubject().login(jwtToken);
-        } catch (AuthenticationException e) {
-            throw new BusinessException(2001, e.getMessage());
+        if (!substring.equals(userLogin.getUserPassword())){
+            return Result.error().message("密码错误");
         }
-
+        Long currentTimeMillis = System.currentTimeMillis();
+        String token = JWTUtils.sign(user.getUserLoginName(),currentTimeMillis);
+//        JWTToken jwtToken = new JWTToken(token);
+//        try {
+//            SecurityUtils.getSubject().login(jwtToken);
+//        } catch (AuthenticationException e) {
+//            throw new BusinessException(2001, e.getMessage());
+//        }
+        redisUtil.set(userLogin.getUserLoginName(),currentTimeMillis,JWTUtils.REFRESH_EXPIRE_TIME);
+        response.setHeader("Authorization", token);
+        response.setHeader("Access-Control-Expose-Headers", "Authorization");
         return Result.ok().data("userId", userLogin.getUserId()).data("token", token);
     }
 

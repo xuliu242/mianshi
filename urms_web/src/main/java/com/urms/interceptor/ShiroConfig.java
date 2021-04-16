@@ -13,6 +13,7 @@ import org.springframework.context.annotation.DependsOn;
 
 import javax.servlet.Filter;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 @Configuration
@@ -20,9 +21,9 @@ public class ShiroConfig {
 
     @Bean("securityManager")
     public DefaultWebSecurityManager getManager(UserRealm realm) {
+        System.out.println("getManager");
         DefaultWebSecurityManager manager = new DefaultWebSecurityManager();
-        // 使用自己的realm
-        manager.setRealm(realm);
+
         /*
          * 关闭shiro自带的session，详情见文档
          * http://shiro.apache.org/session-management.html#SessionManagement-StatelessApplications%28Sessionless%29
@@ -32,27 +33,31 @@ public class ShiroConfig {
         defaultSessionStorageEvaluator.setSessionStorageEnabled(false);
         subjectDAO.setSessionStorageEvaluator(defaultSessionStorageEvaluator);
         manager.setSubjectDAO(subjectDAO);
+        // 使用自己的realm
+        manager.setRealm(realm);
 
         return manager;
     }
 
     @Bean("shiroFilter")
     public ShiroFilterFactoryBean factory(DefaultWebSecurityManager securityManager) {
+        System.out.println("factory");
         ShiroFilterFactoryBean factoryBean = new ShiroFilterFactoryBean();
 
         // 添加自己的过滤器并且取名为jwt
         Map<String, Filter> filterMap = new HashMap<>();
         filterMap.put("jwt", new JWTFilter());
         factoryBean.setFilters(filterMap);
+//        factoryBean.setLoginUrl("/urms/login/doLogin");
 
         factoryBean.setSecurityManager(securityManager);
         /*
          * 自定义url规则
          * http://shiro.apache.org/web.html#urls-
          */
-        Map<String, String> filterRuleMap = new HashMap<>();
-        // 所有请求通过我们自己的JWT Filter
-        filterRuleMap.put("/**", "jwt");
+        //不要用HashMap来创建Map，会有某些配置失效，要用链表的LinkedHashmap
+        Map<String,String> filterRuleMap=new LinkedHashMap<>();
+
         // 访问401和404页面不通过我们的Filter
 
         //开放API文档接口
@@ -63,9 +68,12 @@ public class ShiroConfig {
         filterRuleMap.put("/doc.html/**","anon");
         filterRuleMap.put("/v2/**","anon");
 //        filterRuleMap.put("/user/**","authc");
-        filterRuleMap.put("/login/**","anon");
+        filterRuleMap.put("/login","anon");
+        filterRuleMap.put("/","anon");
         //sql监控
         filterRuleMap.put("/druid/**","anon");
+        // 所有请求通过我们自己的JWT Filter
+        filterRuleMap.put("/**", "jwt");
         factoryBean.setFilterChainDefinitionMap(filterRuleMap);
         factoryBean.setUnauthorizedUrl("/unauthorized");
         return factoryBean;
@@ -74,15 +82,15 @@ public class ShiroConfig {
     /**
      * 下面的代码是添加注解支持
      */
-    @Bean
-    @DependsOn("lifecycleBeanPostProcessor")
-    public DefaultAdvisorAutoProxyCreator defaultAdvisorAutoProxyCreator() {
-        DefaultAdvisorAutoProxyCreator defaultAdvisorAutoProxyCreator = new DefaultAdvisorAutoProxyCreator();
-        // 强制使用cglib，防止重复代理和可能引起代理出错的问题
-        // https://zhuanlan.zhihu.com/p/29161098
-        defaultAdvisorAutoProxyCreator.setProxyTargetClass(true);
-        return defaultAdvisorAutoProxyCreator;
-    }
+//    @Bean
+//    @DependsOn("lifecycleBeanPostProcessor")
+//    public DefaultAdvisorAutoProxyCreator defaultAdvisorAutoProxyCreator() {
+//        DefaultAdvisorAutoProxyCreator defaultAdvisorAutoProxyCreator = new DefaultAdvisorAutoProxyCreator();
+//        // 强制使用cglib，防止重复代理和可能引起代理出错的问题
+//        // https://zhuanlan.zhihu.com/p/29161098
+//        defaultAdvisorAutoProxyCreator.setProxyTargetClass(true);
+//        return defaultAdvisorAutoProxyCreator;
+//    }
 
     @Bean
     public LifecycleBeanPostProcessor lifecycleBeanPostProcessor() {

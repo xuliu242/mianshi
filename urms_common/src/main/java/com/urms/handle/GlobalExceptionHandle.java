@@ -1,6 +1,7 @@
 package com.urms.handle;
 
 
+import com.auth0.jwt.exceptions.TokenExpiredException;
 import com.urms.response.Result;
 import com.urms.response.ResultCode;
 import org.apache.shiro.authc.AuthenticationException;
@@ -55,5 +56,12 @@ public class GlobalExceptionHandle {
     public Result error(SQLIntegrityConstraintViolationException e){
         e.printStackTrace();
         return Result.error().code(6005).message(e.getMessage());
+    }
+    //    自定义异常
+    @ExceptionHandler(TokenExpiredException.class)
+    @ResponseBody
+    public Result error(TokenExpiredException e){
+        e.printStackTrace();
+        return Result.error().code(401).message("token 验证错误");
     }
 }

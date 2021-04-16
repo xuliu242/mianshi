@@ -8,6 +8,7 @@ package com.urms.utils;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
+import com.auth0.jwt.exceptions.JWTCreationException;
 import com.auth0.jwt.exceptions.JWTDecodeException;
 import com.auth0.jwt.interfaces.DecodedJWT;
 
@@ -15,71 +16,74 @@ import java.io.UnsupportedEncodingException;
 import java.util.Date;
 
 public class JWTUtils {
-    /**
-     * 过期时间30min
-     */
-    private static final long EXPIRE_TIME = 30*60*1000;
+    public static final long EXPIRE_TIME= 1*60*1000;//token到期时间10分钟，毫秒为单位
+    public static final long REFRESH_EXPIRE_TIME=30*60;//RefreshToken到期时间为30分钟，秒为单位
+    private static final String TOKEN_SECRET="salt";  //密钥盐
 
     /**
-     * 校验token是否正确
-     * @param token 密钥
-     * @param secret 用户的密码
-     * @return 是否正确
+     * @Description  ：生成token
+     * @author       : lj
+     * @param        : [user]
+     * @return       : java.lang.String
+     * @exception    :
+     * @date         : 2020-1-31 22:49
      */
-    public static boolean verify(String token, String username, String secret) {
+    public static String sign(String account,Long currentTime){
+
+        String token=null;
         try {
-            Algorithm algorithm = Algorithm.HMAC256(secret);
-            JWTVerifier verifier = JWT.require(algorithm)
-                    .withClaim("username", username)
-                    .build();
-            DecodedJWT jwt = verifier.verify(token);
-            return true;
-        } catch (Exception exception) {
-            return false;
+            Date expireAt=new Date(currentTime+EXPIRE_TIME);
+            token = JWT.create()
+                    .withIssuer("auth0")//发行人
+                    .withClaim("account",account)//存放数据
+                    .withClaim("currentTime",currentTime)
+                    .withExpiresAt(expireAt)//过期时间
+                    .sign(Algorithm.HMAC256(TOKEN_SECRET));
+        } catch (IllegalArgumentException| JWTCreationException je) {
+
         }
+        return token;
     }
 
+
     /**
-     * 获得token中的信息无需secret解密也能获得
-     * @return token中包含的用户名
+     * @Description  ：token验证
+     * @author       : lj
+     * @param        : [token]
+     * @return       : java.lang.Boolean
+     * @exception    :
+     * @date         : 2020-1-31 22:59
      */
-    public static String getUsername(String token) {
-        try {
-            DecodedJWT jwt = JWT.decode(token);
-            return jwt.getClaim("username").asString();
-        } catch (JWTDecodeException e) {
+    public static Boolean verify(String token) throws Exception{
+
+        JWTVerifier jwtVerifier=JWT.require(Algorithm.HMAC256(TOKEN_SECRET)).withIssuer("auth0").build();//创建token验证器
+        DecodedJWT decodedJWT=jwtVerifier.verify(token);
+        System.out.println("认证通过：");
+        System.out.println("account: " + decodedJWT.getClaim("account").asString());
+        System.out.println("过期时间：      " + decodedJWT.getExpiresAt());
+        return true;
+    }
+
+
+
+    public static String getAccount(String token){
+        try{
+            DecodedJWT decodedJWT=JWT.decode(token);
+            return decodedJWT.getClaim("account").asString();
+
+        }catch (JWTCreationException e){
+            return null;
+        }
+    }
+    public static Long getCurrentTime(String token){
+        try{
+            DecodedJWT decodedJWT=JWT.decode(token);
+            return decodedJWT.getClaim("currentTime").asLong();
+
+        }catch (JWTCreationException e){
             return null;
         }
     }
 
-    /**
-     * 生成签名,30min后过期
-     * @param username 用户名
-     * @param secret 用户的密码
-     * @return 加密的token
-     */
-    public static String sign(String username, String secret) {
-        try {
-            Date date = new Date(System.currentTimeMillis()+EXPIRE_TIME);
-            Algorithm algorithm = Algorithm.HMAC256(secret);
-            // 附带username信息
-            return JWT.create()
-                    .withClaim("username", username)
-                    .withExpiresAt(date)
-                    .sign(algorithm);
-        } catch (Exception e) {
-            return null;
-        }
-    }
-
-    /**
-     * 判断过期
-     * @param token
-     * @return
-     */
-    public static boolean isExpire(String token){
-        DecodedJWT jwt = JWT.decode(token);
-        return System.currentTimeMillis()>jwt.getExpiresAt().getTime();
-    }
-    }
+}
 

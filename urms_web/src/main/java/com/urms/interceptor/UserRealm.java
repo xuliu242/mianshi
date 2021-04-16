@@ -20,13 +20,15 @@ import org.apache.shiro.authz.SimpleAuthorizationInfo;
 import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.subject.PrincipalCollection;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
+import springfox.documentation.annotations.Cacheable;
 
 import java.util.*;
 
-@Service
+@Component
 public class UserRealm extends AuthorizingRealm {
 
     @Autowired
@@ -51,8 +53,10 @@ public class UserRealm extends AuthorizingRealm {
      */
     @Override
     protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principals) {
-
+        System.out.println("userRealm doGetAuthorizationInfo");
         SimpleAuthorizationInfo authorizationInfo = new SimpleAuthorizationInfo();
+        Object principal = SecurityUtils.getSubject().getPrincipal();
+        System.out.println(principal.toString());
         ActiveUser activeUser = (ActiveUser) SecurityUtils.getSubject().getPrincipal();
 
         if(activeUser==null){
@@ -87,10 +91,17 @@ public class UserRealm extends AuthorizingRealm {
     @SneakyThrows
     @Override
     protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken auth) throws AuthenticationException {
+        System.out.println("userRealme doGetAuthenticationInfo======================================");
         String token = (String) auth.getCredentials();
         // 解密获得username，用于和数据库进行对比
-        String username = JWTUtils.getUsername(token);
+        String username = null;
+        try {
+            username = JWTUtils.getAccount(token);
+        }catch (AuthenticationException e){
+            e.printStackTrace();
+        }
 
+        System.out.println(token+"======================================"+username);
         if (StringUtils.isEmpty(username)) {
             throw new AuthenticationException(" token错误，请重新登入！");
         }
@@ -100,14 +111,13 @@ public class UserRealm extends AuthorizingRealm {
         if (Objects.isNull(userBean)) {
             throw new AccountException("账号不存在!");
         }
-        if(JWTUtils.isExpire(token)){
-            throw new AuthenticationException(" token过期，请重新登入！");
-        }
-
-        if (! JWTUtils.verify(token, username, userBean.getUserPassword())) {
-            throw new CredentialsException("密码错误!");
-        }
-
+//        if(JWTUtils.isExpire(token)){
+//            throw new AuthenticationException(" token过期，请重新登入！");
+//        }
+//
+//        if (! JWTUtils.verify(token, username, userBean.getUserPassword())) {
+//            throw new CredentialsException("密码错误!");
+//        }
         if(userBean.getUserStatus().equals("0")){
             throw new LockedAccountException("账号已被锁定!");
         }
@@ -143,6 +153,9 @@ public class UserRealm extends AuthorizingRealm {
         System.out.println("activeUser.getPermissions()"+activeUser.getPermissions());
         System.out.println("activeUser.getRoles()"+activeUser.getRoles().toString());
         System.out.println("activeUser.getUrls()"+activeUser.getUrls().toString());
-        return new SimpleAuthenticationInfo(activeUser, token, getName());
+        System.out.println("getName()"+getName());
+        return new SimpleAuthenticationInfo(activeUser, token, "MyRealm");
     }
+
+
 }
